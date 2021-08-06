@@ -61,8 +61,12 @@
         "error",
         {
           "selector": "memberLike",
-          "modifiers": ["private"],
-          "format": ["camelCase"],
+          "modifiers": [
+            "private"
+          ],
+          "format": [
+            "camelCase"
+          ],
           "leadingUnderscore": "requireDouble"
         }
       ],
