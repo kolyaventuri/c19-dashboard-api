@@ -16,6 +16,8 @@ provider:
     ENV: ${self:provider.stage}
     REGION: ${self:provider.region}
     SERVICE_NAME: ${self:service}-${self:provider.stage}
+    DYNAMO_URL: ${self:custom.dynamo.url.${self:provider.stage}, ""}
+    DYNAMO_TABLE: ${self:custom.dynamo.table.cache}
 
 custom:
   logs:
@@ -51,6 +53,22 @@ custom:
     endpointType: 'regional'
     securityPolicy: tls_1_2
     enabled: ${self:custom.domain.enabled.${self:provider.stage}}
+  dynamo:
+    table:
+      cache: c19-dashboard-cache_${self:provider.stage}
+    url:
+      local: http://localhost:8000
+  dynamodb:
+    stages:
+      - local
+    start:
+      port: 8000
+      inMemory: true
+      heapInitial: 200m
+      heapMax: 1g
+      migrate: true
+      seed: true
+      convertEmptyValues: true
 
 functions:
   healthcheck:
@@ -60,6 +78,22 @@ functions:
       - http:
           path: healthcheck
           method: get
+
+resources:
+  Resources:
+    GeneratorTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.dynamo.table.cache}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 3
     
 plugins:
   - serverless-webpack
@@ -68,3 +102,4 @@ plugins:
   - serverless-prune-plugin
   - serverless-domain-manager
   - serverless-offline
+  - serverless-dynamodb-local

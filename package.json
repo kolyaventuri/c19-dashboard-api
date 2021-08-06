@@ -14,7 +14,10 @@
     "test:unit": "cross-env TS_NODE_PROJECT=tsconfig.ava.json ava",
     "lint:tsc": "tsc --noEmit",
     "lint:lint": "xo --fix",
-    "build": "sls webpack"
+    "build": "sls webpack",
+    "dynamo:start": "sls dynamodb start --stage local",
+    "dynamo:install": "sls dynamodb install",
+    "dynamo:reset": "ts-node ./scripts/reset-db.ts && sls dynamodb migrate --stage local"
   },
   "repository": {
     "type": "git",
@@ -149,6 +152,7 @@
     "serverless": "^2.51.2",
     "serverless-domain-manager": "^5.1.5",
     "serverless-dotenv-plugin": "^3.9.0",
+    "serverless-dynamodb-local": "^0.2.40",
     "serverless-offline": "^7.0.0",
     "serverless-plugin-warmup": "^5.3.1",
     "serverless-prune-plugin": "^1.5.1",
