@@ -30,11 +30,6 @@
     "url": "https://github.com/kolyaventuri/serverless-template/issues"
   },
   "homepage": "https://github.com/kolyaventuri/serverless-template#readme",
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm-run-all lint:tsc && lint-staged"
-    }
-  },
   "lint-staged": {
     "*": [
       "xo --fix"
