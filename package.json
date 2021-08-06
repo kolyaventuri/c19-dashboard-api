@@ -84,7 +84,9 @@
       {
         "files": "test/**/*.ts",
         "rules": {
-          "@typescript-eslint/explicit-function-return-type": 0
+          "@typescript-eslint/explicit-function-return-type": 0,
+          "@typescript-eslint/no-unsafe-assignment": 0,
+          "@typescript-eslint/no-unsafe-call": 0
         }
       }
     ],

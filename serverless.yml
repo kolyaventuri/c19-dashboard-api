@@ -76,7 +76,7 @@ functions:
     description: Basic page ok healthcheck
     events:
       - http:
-          path: healthcheck
+          path: v1/healthcheck
           method: get
 
 resources:
