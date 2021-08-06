@@ -78,6 +78,13 @@ functions:
       - http:
           path: v1/healthcheck
           method: get
+  stateTimeseriesRisk:
+    handler: src/states/timeseries.risk
+    description: State risk timeseries
+    events:
+      - http:
+          path: v1/states/risk/timeseries
+          method: get
 
 resources:
   Resources:
