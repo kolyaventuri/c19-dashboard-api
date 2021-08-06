@@ -4,10 +4,11 @@ import proxyquire from 'proxyquire';
 
 const prom: sinon.SinonStub = stub().resolves();
 const {healthcheck} = proxyquire.noCallThru()('../../src/healthcheck/get', {
-  '..db': {
+  '../db': {
     db: {
-      scan: stub().returns(prom),
+      scan: stub().returns({promise: prom}),
     },
+    tables: {},
   },
 });
 
@@ -16,6 +17,7 @@ test.beforeEach(() => {
 });
 
 test('returns a 200 ok response if the DB call passes', async t => {
+  prom.resolves();
   const result = await healthcheck({} as AWSLambda.APIGatewayProxyEvent);
 
   t.deepEqual(result, {
