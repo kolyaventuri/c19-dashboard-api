@@ -1,5 +1,7 @@
 interface Timeseries<T> {
-  [date: string]: T[] 
+  [key: string]: {
+    [key: string]: T
+  } 
 }
 
 interface Data {
@@ -8,7 +10,10 @@ interface Data {
 
 type KeyType = 'state' | 'county';
 interface TransformFunc {
-  <T extends Array<unknown>, P = unknown>(data: T, key: KeyType, dataKey: string): Timeseries<P>;
+  <T extends Array<unknown>, P = unknown>(data: T, key: KeyType, dataKey: string): {
+    range: string[];
+    data: Timeseries<P>
+  };
 }
 
 interface Item {
@@ -39,17 +44,20 @@ export const transformTimeseries: TransformFunc = (data, key, dataKey) => {
     }
   }
 
-  const keys = Object.keys(days);
-  const stateList: {[key: string]: any[]} = {};
+  const keys = Object.keys(days).sort();
+  const stateList: {[key: string]: {[key: string]: any}} = {};
   for (const key of keys) {
     const states = Object.keys(days[key]);
     for (const abbr of states) {
       const value = days[key][abbr];
 
-      if (!stateList[abbr]) stateList[abbr] = [];
-      stateList[abbr].push(value);
+      if (!stateList[abbr]) stateList[abbr] = {};
+      stateList[abbr][key] = value;
     }
   }
 
-  return stateList;
+  return {
+    range: keys,
+    data: stateList
+  };
 };
