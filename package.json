@@ -162,5 +162,8 @@
     "webpack": "^5.44.0",
     "webpack-node-externals": "^3.0.0",
     "xo": "^0.41.0"
+  },
+  "dependencies": {
+    "@kolyaventuri/covid-act-now": "^1.0.3"
   }
 }
