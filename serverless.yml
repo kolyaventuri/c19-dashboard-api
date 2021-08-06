@@ -1,4 +1,4 @@
-service: c19-dashboard-${self:provider.stage}
+service: c19-dashboard-api-${self:provider.stage}
 useDotenv: true
 
 package:
@@ -8,7 +8,7 @@ provider:
   name: aws
   runtime: nodejs12.x
   region: us-west-2
-  profile: "<AWS_PROFILE>"
+  profile: "${env:AWS_PROFILE}"
   role: "arn:aws:iam::${env:AWS_ID}:role/${env:AWS_ROLE}-${self:provider.stage}"
   stage: ${opt:stage, 'dev'}
   logRetentionInDays: ${self:custom.logs.retention.${self:provider.stage}, 7}
@@ -43,10 +43,10 @@ custom:
       dev: false
       local: false
   customDomain:
-    domainName: example.com
+    domainName: c19.api.kolyaventuri.dev
     stage: production
     basePath: ''
-    certificateName: 'example.com'
+    certificateName: 'kolyaventuri.dev'
     createRoute53Record: true
     endpointType: 'regional'
     securityPolicy: tls_1_2
