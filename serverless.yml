@@ -1,4 +1,4 @@
-service: c19-dashboard-api-${self:provider.stage}
+service: c19-dashboard-api
 useDotenv: true
 
 package:
