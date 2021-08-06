@@ -1,0 +1,27 @@
+# package directories
+node_modules
+jspm_packages
+
+# Serverless directories
+.serverless
+
+# Webpack
+.webpack
+
+# Build
+.build
+
+# Dotenv
+.env
+.env*
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# dynamodb-local
+.dynamodb
+
+# Webpack + serverless
+_warmup

@@ -1,0 +1,161 @@
+{
+  "name": "serverless-template",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "deploy:env": "sls deploy --stage $NODE_ENV",
+    "deploy": "sls deploy --stage dev",
+    "deploy:production": "sls deploy --stage production",
+    "deploy:stage": "sls deploy --stage stage",
+    "serve": "sls offline --httpPort 3000 --stage local --noPrependStageInUrl --noAuth",
+    "serve:watch": "nodemon -e js,ts,jsx,tsx,yml -x npm run serve",
+    "test": "npm-run-all lint:* test:*",
+    "test:unit": "cross-env TS_NODE_PROJECT=tsconfig.ava.json ava",
+    "lint:tsc": "tsc --noEmit",
+    "lint:lint": "xo --fix",
+    "build": "sls webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kolyaventuri/serverless-template.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kolyaventuri/serverless-template/issues"
+  },
+  "homepage": "https://github.com/kolyaventuri/serverless-template#readme",
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm-run-all lint:tsc && lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*": [
+      "xo --fix"
+    ]
+  },
+  "xo": {
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "project": [
+        "./tsconfig.json"
+      ]
+    },
+    "extends": [
+      "xo-typescript",
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "extensions": [
+      "ts"
+    ],
+    "space": true,
+    "compilerOptions": {
+      "strict": true
+    },
+    "rules": {
+      "@typescript-eslint/camelcase": 0,
+      "@typescript-eslint/naming-convention": [
+        "error",
+        {
+          "selector": "memberLike",
+          "modifiers": ["private"],
+          "format": ["camelCase"],
+          "leadingUnderscore": "requireDouble"
+        }
+      ],
+      "indent": 0,
+      "@typescript-eslint/indent": [
+        "error",
+        2
+      ],
+      "@typescript-eslint/no-explicit-any": 0
+    },
+    "overrides": [
+      {
+        "files": "test/**/*.ts",
+        "rules": {
+          "@typescript-eslint/explicit-function-return-type": 0
+        }
+      }
+    ],
+    "settings": {
+      "react": {
+        "version": "16.5"
+      }
+    },
+    "env": [
+      "node"
+    ],
+    "include": [
+      "**/*.ts?(x)"
+    ],
+    "ignore": [
+      "*.js",
+      "scripts/**/*"
+    ]
+  },
+  "ava": {
+    "babel": {
+      "compileEnhancements": false,
+      "compileAsTests": [
+        "test/helpers/**/*.ts"
+      ]
+    },
+    "extensions": [
+      "ts",
+      "tsx"
+    ],
+    "files": [
+      "test/**/*.test.ts?(x)"
+    ],
+    "require": [
+      "esm",
+      "ts-node/register",
+      "tsconfig-paths/register"
+    ]
+  },
+  "devDependencies": {
+    "@ava/babel": "^2.0.0",
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.7",
+    "@babel/preset-typescript": "^7.14.5",
+    "@types/aws-lambda": "^8.10.78",
+    "@types/proxyquire": "^1.3.28",
+    "@types/sinon": "^10.0.2",
+    "@typescript-eslint/eslint-plugin": "^4.28.2",
+    "@typescript-eslint/parser": "^4.28.2",
+    "ava": "^3.15.0",
+    "aws-sdk": "^2.942.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "dotenv": "^10.0.0",
+    "eslint": "^7.30.0",
+    "eslint-config-xo": "^0.37.0",
+    "eslint-config-xo-typescript": "^0.43.0",
+    "esm": "^3.2.25",
+    "husky": "^7.0.1",
+    "lint-staged": "^11.0.0",
+    "nodemon": "^2.0.10",
+    "npm-run-all": "^4.1.5",
+    "proxyquire": "^2.1.3",
+    "serverless": "^2.51.2",
+    "serverless-domain-manager": "^5.1.0",
+    "serverless-dotenv-plugin": "^3.9.0",
+    "serverless-offline": "^7.0.0",
+    "serverless-plugin-warmup": "^5.3.1",
+    "serverless-prune-plugin": "^1.5.1",
+    "serverless-webpack": "^5.5.1",
+    "sinon": "^11.1.1",
+    "ts-loader": "^9.2.3",
+    "ts-node": "^10.0.0",
+    "tsconfig-paths": "^3.10.1",
+    "typescript": "^4.3.5",
+    "webpack": "^5.44.0",
+    "webpack-node-externals": "^3.0.0",
+    "xo": "^0.41.0"
+  }
+}
