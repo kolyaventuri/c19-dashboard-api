@@ -18,6 +18,7 @@ provider:
     SERVICE_NAME: ${self:service}-${self:provider.stage}
     DYNAMO_URL: ${self:custom.dynamo.url.${self:provider.stage}, ""}
     DYNAMO_TABLE: ${self:custom.dynamo.table.cache}
+    COVID_ACT_NOW_KEY: ${env:COVID_ACT_NOW_KEY}
 
 custom:
   logs:
