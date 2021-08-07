@@ -1,63 +1,61 @@
-interface Timeseries<T> {
-  [key: string]: {
-    [key: string]: T
-  } 
-}
+type Timeseries<T> = Record<string, Record<string, T>>;
 
-interface Data {
-  [key: string]: unknown;
-}
+type Data = Record<string, unknown>;
 
 type KeyType = 'state' | 'county';
-interface TransformFunc {
-  <T extends Array<unknown>, P = unknown>(data: T, key: KeyType, dataKey: string): {
-    range: string[];
-    data: Timeseries<P>
-  };
-}
+type TransformFunc = <T extends unknown[], P = unknown>(data: T, key: KeyType, dataKey: string) => {
+  range: string[];
+  data: Timeseries<P>;
+};
 
 interface Item {
+  [key: string]: string | number;
   date: string;
-  [key: string]: any;
 }
 
 const getEntryKey = (key: string): string => {
-  if (key === 'riskLevels') return 'overall';
+  if (key === 'riskLevels') {
+    return 'overall';
+  }
+
   return '';
 };
 
 export const transformTimeseries: TransformFunc = (data, key, dataKey) => {
-  const days: {[key: string]: {[key: string]: number}} = {};
+  const days: Record<string, Record<string, number>> = {};
   const entryKey = getEntryKey(dataKey);
 
   const _key = key === 'state' ? 'state' : 'fips';
-  for (const e of data) {
-    const entry = e as Data;
+  for (const entry of (data as Data[])) {
     const abbr = entry[_key] as string || 'UNKNOWN';
-    const items = (entry[`${dataKey}Timeseries`] as Item[]).reverse().slice(0, 13).reverse();        
+    const items = (entry[`${dataKey}Timeseries`] as Item[]).reverse().slice(0, 13).reverse();
 
     for (const item of items) {
       if (!days[item.date]) {
         days[item.date] = {};
       }
-      days[item.date][abbr] = item[entryKey];
+
+      days[item.date][abbr] = item[entryKey] as number;
     }
   }
 
   const keys = Object.keys(days).sort();
-  const stateList: {[key: string]: {[key: string]: any}} = {};
+  const stateList: Record<string, Record<string, any>> = {};
   for (const key of keys) {
     const states = Object.keys(days[key]);
     for (const abbr of states) {
       const value = days[key][abbr];
 
-      if (!stateList[abbr]) stateList[abbr] = {};
+      if (!stateList[abbr]) {
+        stateList[abbr] = {};
+      }
+
       stateList[abbr][key] = value;
     }
   }
 
   return {
     range: keys,
-    data: stateList
+    data: stateList,
   };
 };
