@@ -1,13 +1,13 @@
-import client from '../c19-client';
-import runWarm from '../utils/run-warm';
-import {transformTimeseries} from '../utils/transform-timeseries';
+import client from '../../c19-client';
+import runWarm from '../../utils/run-warm';
+import {transformTimeseries} from '../../utils/transform-timeseries';
 
 const errorResponse = {
   statusCode: 503,
   body: '503 Service Unavailable',
 };
 
-export const getRisk = async (_: AWSLambda.APIGatewayEvent): Promise<AWSLambda.APIGatewayProxyResult> => {
+export const risk = async (_: AWSLambda.APIGatewayEvent): Promise<AWSLambda.APIGatewayProxyResult> => {
   let result = {};
   try {
     const data = await client.states.timeseries();
@@ -23,5 +23,5 @@ export const getRisk = async (_: AWSLambda.APIGatewayEvent): Promise<AWSLambda.A
   };
 };
 
-export const risk = runWarm(getRisk);
+export const handler = runWarm(risk);
 

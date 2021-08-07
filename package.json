@@ -11,7 +11,7 @@
     "serve": "sls offline --httpPort 3000 --stage local --noPrependStageInUrl --noAuth",
     "serve:watch": "nodemon -e js,ts,jsx,tsx,yml -x npm run serve",
     "test": "npm-run-all lint:* test:*",
-    "test:unit": "ts-mocha --require test/helpers/setup.ts test/**/*.test.ts",
+    "test:unit": "ts-mocha --require test/helpers/setup.ts \"test/**/*.test.ts\"",
     "lint:tsc": "tsc --noEmit",
     "lint:lint": "xo --fix",
     "build": "sls webpack",
