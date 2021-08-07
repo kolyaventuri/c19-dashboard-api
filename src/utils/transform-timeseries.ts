@@ -3,7 +3,7 @@ type Timeseries<T> = Record<string, Record<string, T>>;
 type Data = Record<string, unknown>;
 
 type KeyType = 'state' | 'county';
-type TransformFunc = <T extends unknown[], P = unknown>(data: T, key: KeyType, dataKey: string) => {
+type TransformFunc = <T extends unknown[], P = unknown>(data: T, key: KeyType, dataKey: string, length?: number) => {
   range: string[];
   data: Timeseries<P>;
 };
@@ -21,14 +21,14 @@ const getEntryKey = (key: string): string => {
   return '';
 };
 
-export const transformTimeseries: TransformFunc = (data, key, dataKey) => {
+export const transformTimeseries: TransformFunc = (data, key, dataKey, length = 13) => {
   const days: Record<string, Record<string, number>> = {};
   const entryKey = getEntryKey(dataKey);
 
   const _key = key === 'state' ? 'state' : 'fips';
   for (const entry of (data as Data[])) {
     const abbr = entry[_key] as string || 'UNKNOWN';
-    const items = (entry[`${dataKey}Timeseries`] as Item[]).reverse().slice(0, 13).reverse();
+    const items = (entry[`${dataKey}Timeseries`] as Item[]).reverse().slice(0, length).reverse();
 
     for (const item of items) {
       if (!days[item.date]) {
