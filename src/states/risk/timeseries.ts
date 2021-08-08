@@ -1,4 +1,5 @@
 import client from '../../c19-client';
+import { cors } from '../../constants/headers';
 import runWarm from '../../utils/run-warm';
 import {transformTimeseries} from '../../utils/transform-timeseries';
 
@@ -19,6 +20,7 @@ export const risk = async (_: AWSLambda.APIGatewayEvent): Promise<AWSLambda.APIG
 
   return {
     statusCode: 200,
+    headers: cors,
     body: JSON.stringify(result),
   };
 };

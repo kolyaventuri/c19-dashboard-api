@@ -79,6 +79,7 @@ functions:
       - http:
           path: v1/healthcheck
           method: get
+          cors: true
   stateTimeseriesRisk:
     handler: src/states/risk/timeseries.handler
     description: State risk timeseries
@@ -86,6 +87,7 @@ functions:
       - http:
           path: v1/states/risk/timeseries
           method: get
+          cors: true
 
 resources:
   Resources:
