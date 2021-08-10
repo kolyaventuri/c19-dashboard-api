@@ -1,5 +1,5 @@
 import client from '../../c19-client';
-import { cors } from '../../constants/headers';
+import {cors} from '../../constants/headers';
 import runWarm from '../../utils/run-warm';
 import {transformTimeseries} from '../../utils/transform-timeseries';
 
