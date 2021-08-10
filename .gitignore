@@ -25,3 +25,5 @@ npm-debug.log*
 
 # Webpack + serverless
 _warmup
+
+seed/*.json

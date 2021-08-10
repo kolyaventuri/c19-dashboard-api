@@ -12,7 +12,8 @@
     "noEmit": false,
     "jsx": "preserve",
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "typeRoots": ["./node_modules/@types", "./@types"]
   },
   "exclude": ["node_modules", "./webpack.config.js"],
   "include": ["src", "test"]
