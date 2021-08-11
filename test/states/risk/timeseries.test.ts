@@ -23,7 +23,7 @@ beforeEach(() => {
 it('makes a call to the client', async () => {
   await risk({} as AWSLambda.APIGatewayProxyEvent);
 
-  expect(client.states.timeseries).to.have.been.called;
+  expect(client.states.timeseries).to.have.been.called; // eslint-disable @typescript/no-unused-expressions
 });
 
 it('returns the transformed data', async () => {

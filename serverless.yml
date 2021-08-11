@@ -90,6 +90,14 @@ functions:
           path: v1/states/risk/timeseries
           method: get
           cors: true
+  countyTimeseriesRisk:
+    handler: src/counties/risk/timeseries.handler
+    description: County risk timeseries
+    events:
+      - http:
+          path: v1/counties/risk/timeseries
+          method: get
+          cors: true
   countiesUpdater:
     handler: src/utils/update-counties.update
     description: Update the Counties data in S3
