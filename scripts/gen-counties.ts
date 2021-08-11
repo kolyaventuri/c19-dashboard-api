@@ -31,6 +31,7 @@ pipeline.on('data', (data: any) => {
   }
 
   res.data[fips] = item;
+  res.range = Array.from(range).sort();
 
   // if (count === 10) {
   //   res.range = Array.from(range);

@@ -90,6 +90,12 @@ functions:
           path: v1/states/risk/timeseries
           method: get
           cors: true
+  countiesUpdater:
+    handler: src/utils/update-counties.update
+    description: Update the Counties data in S3
+    events:
+      - eventBridge:
+          schedule: cron(0 19 * * ? *)
 
 resources:
   Resources:
@@ -112,8 +118,8 @@ resources:
         BucketName: ${self:custom.config.bucket}
         BucketEncryption:
           ServerSideEncryptionConfiguration:
-            - ServerSideEncryptionByDefault:
-              SSEAlgorithm: AES256
+            - ServerSideEncryptionByDefault: 
+                SSEAlgorithm: AES256
         VersioningConfiguration:
           Status: Enabled
         CorsConfiguration:
