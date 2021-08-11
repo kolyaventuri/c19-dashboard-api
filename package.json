@@ -54,6 +54,7 @@
       "strict": true
     },
     "rules": {
+      "unicorn/prefer-node-protocol": 0,
       "@typescript-eslint/camelcase": 0,
       "@typescript-eslint/naming-convention": [
         "error",
@@ -113,6 +114,7 @@
     "@types/proxyquire": "^1.3.28",
     "@types/sinon": "^10.0.2",
     "@types/sinon-chai": "^3.2.5",
+    "@types/stream-json": "^1.7.1",
     "@typescript-eslint/eslint-plugin": "^4.28.2",
     "@typescript-eslint/parser": "^4.28.2",
     "aws-sdk": "^2.942.0",
@@ -131,6 +133,8 @@
     "nodemon": "^2.0.10",
     "npm-run-all": "^4.1.5",
     "proxyquire": "^2.1.3",
+    "request": "^2.88.2",
+    "request-progress": "^3.0.0",
     "serverless": "^2.51.2",
     "serverless-domain-manager": "^5.1.5",
     "serverless-dotenv-plugin": "^3.9.0",
@@ -141,6 +145,7 @@
     "serverless-webpack": "^5.5.1",
     "sinon": "^11.1.2",
     "sinon-chai": "^3.7.0",
+    "stream-json": "^1.7.2",
     "ts-loader": "^9.2.3",
     "ts-mocha": "^8.0.0",
     "ts-node": "^10.0.0",

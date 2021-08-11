@@ -3,7 +3,7 @@ import {expect} from 'chai';
 import proxyquire from 'proxyquire';
 import sinon, {stub} from 'sinon';
 import {risk as realRisk} from '../../../src/states/risk/timeseries';
-import createMockClient, { MockClient } from '../../mocks/mockClient';
+import createMockClient, {MockClient} from '../../mocks/mock-client';
 
 import stateTimeseriesResult from '../../fixtures/timeseries/state-input.json';
 
@@ -16,14 +16,14 @@ beforeEach(() => {
   transformTimeseries = stub();
   risk = proxyquire.noCallThru()<{risk: typeof realRisk}>('../../../src/states/risk/timeseries', {
     '../../c19-client': client,
-    '../../utils/transform-timeseries': {transformTimeseries}
+    '../../utils/transform-timeseries': {transformTimeseries},
   }).risk;
 });
 
 it('makes a call to the client', async () => {
   await risk({} as AWSLambda.APIGatewayProxyEvent);
 
-  expect(client.states.timeseries).to.have.been.called;
+  expect(client.states.timeseries).to.have.been.called; // eslint-disable @typescript/no-unused-expressions
 });
 
 it('returns the transformed data', async () => {
@@ -34,6 +34,6 @@ it('returns the transformed data', async () => {
   expect(transformTimeseries).to.have.been.calledWith(stateTimeseriesResult, 'state', 'riskLevels');
   expect(result).to.deep.equal({
     statusCode: 200,
-    body: JSON.stringify(expected)
+    body: JSON.stringify(expected),
   });
 });

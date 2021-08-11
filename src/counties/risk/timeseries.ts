@@ -1,7 +1,8 @@
-import client from '../../c19-client';
 import {cors} from '../../constants/headers';
 import runWarm from '../../utils/run-warm';
-import {transformTimeseries} from '../../utils/transform-timeseries';
+import AWS from '../../utils/aws-or-mock';
+
+const S3 = new AWS.S3();
 
 const errorResponse = {
   statusCode: 503,
@@ -9,10 +10,19 @@ const errorResponse = {
 };
 
 export const risk = async (_: AWSLambda.APIGatewayEvent): Promise<AWSLambda.APIGatewayProxyResult> => {
-  let result: Record<string, unknown> = {};
+  let result: string;
   try {
-    const data = await client.states.timeseries();
-    result = transformTimeseries<typeof data, number>(data, 'state', 'riskLevels', 30);
+    const object = await S3.getObject({
+      Bucket: 'c19-dashboard-api-production',
+      Key: 'counties/risk-timeseries.json',
+    }).promise();
+    const dataString = object.Body?.toString();
+
+    if (!dataString) {
+      throw new Error('Data is missing!');
+    }
+
+    result = dataString;
   } catch (error: unknown) {
     console.error(error);
     return errorResponse;
@@ -21,9 +31,8 @@ export const risk = async (_: AWSLambda.APIGatewayEvent): Promise<AWSLambda.APIG
   return {
     statusCode: 200,
     headers: cors,
-    body: JSON.stringify(result),
+    body: result,
   };
 };
 
 export const handler = runWarm(risk);
-
