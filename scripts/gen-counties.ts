@@ -44,10 +44,10 @@ pipeline.on('data', (data: any) => {
       const ds = Object.keys(cData);
       for (const date of ds) {
         if (!dates[date]) {
-          dates[date] = [];
+          dates[date] = {};
         }
 
-        dates[date].push({id: fips, value: cData[date]});
+        dates[date][fips] = cData[date];
       }
     }
     res.data = Object.values(dates);
@@ -83,7 +83,7 @@ pipeline.on('end', () => {
         dates[date] = [];
       }
 
-      dates[date].push({id: fips, value: cData[date]});
+      dates[date][fips] = cData[date];
     }
   }
   res.data = Object.values(dates);
