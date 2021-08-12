@@ -1,11 +1,10 @@
-type Timeseries<T> = Record<string, Record<string, T>>;
+type Timeseries = {id: string; value: number;}[];
 
 type Data = Record<string, unknown>;
 
-type KeyType = 'state' | 'county';
-type TransformFunc = <T extends unknown[], P = unknown>(data: T, key: KeyType, dataKey: string, length?: number) => {
+type TransformFunc = <T extends unknown[]>(data: T, dataKey: string, length?: number) => {
   range: string[];
-  data: Timeseries<P>;
+  data: Timeseries[];
 };
 
 interface Item {
@@ -21,13 +20,12 @@ const getEntryKey = (key: string): string => {
   return '';
 };
 
-export const transformTimeseries: TransformFunc = (data, key, dataKey, length = 13) => {
+export const transformTimeseries: TransformFunc = (data, dataKey, length = 13) => {
   const days: Record<string, Record<string, number>> = {};
   const entryKey = getEntryKey(dataKey);
 
-  const _key = key === 'state' ? 'state' : 'fips';
   for (const entry of (data as Data[])) {
-    const abbr = entry[_key] as string || 'UNKNOWN';
+    const abbr = entry.fips as string || 'UNKNOWN';
     const items = (entry[`${dataKey}Timeseries`] as Item[]).reverse().slice(0, length).reverse();
 
     for (const item of items) {
@@ -40,22 +38,20 @@ export const transformTimeseries: TransformFunc = (data, key, dataKey, length = 
   }
 
   const keys = Object.keys(days).sort();
-  const stateList: Record<string, Record<string, any>> = {};
-  for (const key of keys) {
-    const states = Object.keys(days[key]);
-    for (const abbr of states) {
-      const value = days[key][abbr];
+  const dataList: Timeseries[] = keys.map(date => {
+    const states = Object.keys(days[date]);
 
-      if (!stateList[abbr]) {
-        stateList[abbr] = {};
-      }
-
-      stateList[abbr][key] = value;
+    const items = [];
+    for (const fips of states) {
+      const value = days[date][fips];
+      items.push({id: fips, value});
     }
-  }
+
+    return items;
+  });
 
   return {
     range: keys,
-    data: stateList,
+    data: dataList,
   };
 };

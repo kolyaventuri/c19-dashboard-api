@@ -12,7 +12,7 @@ export const risk = async (_: AWSLambda.APIGatewayEvent): Promise<AWSLambda.APIG
   let result: Record<string, unknown> = {};
   try {
     const data = await client.states.timeseries();
-    result = transformTimeseries<typeof data, number>(data, 'state', 'riskLevels', 30);
+    result = transformTimeseries<typeof data>(data, 'riskLevels', 30);
   } catch (error: unknown) {
     console.error(error);
     return errorResponse;
