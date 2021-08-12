@@ -66,7 +66,7 @@ pipeline.on('data', (data: any) => {
 
     process.stdout.clearLine(-1);
     process.stdout.cursorTo(0);
-    process.stdout.write(`Last batch of 100 completed in ${time}ms (total: ${count} in ${end[0]}s)...`);
+    process.stdout.write(`Last batch of 100 completed in ${floatingEnd[0]}s ${time}ms (total: ${count} in ${end[0]}s)...`);
     floatingStart = process.hrtime(); 
   }
 });
@@ -80,7 +80,7 @@ pipeline.on('end', () => {
     const ds = Object.keys(cData);
     for (const date of ds) {
       if (!dates[date]) {
-        dates[date] = [];
+        dates[date] = {};
       }
 
       dates[date][fips] = cData[date];
