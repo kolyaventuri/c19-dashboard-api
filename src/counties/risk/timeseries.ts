@@ -9,6 +9,11 @@ const errorResponse = {
   body: '503 Service Unavailable',
 };
 
+interface Data {
+  range: string[];
+  data: Array<Record<string, number>>;
+}
+
 export const risk = async (_: AWSLambda.APIGatewayEvent): Promise<AWSLambda.APIGatewayProxyResult> => {
   let result: string;
   try {
@@ -22,7 +27,18 @@ export const risk = async (_: AWSLambda.APIGatewayEvent): Promise<AWSLambda.APIG
       throw new Error('Data is missing!');
     }
 
-    result = dataString;
+    const jsonData = JSON.parse(dataString) as Data;
+    const newData: Data = {range: [], data: []};
+
+    for (let i = 0; i < jsonData.range.length; i++) {
+      const length = Object.keys(jsonData.data[i]).length;
+      if (length >= 2000) {
+        newData.range.push(jsonData.range[i]);
+        newData.data.push(jsonData.data[i]);
+      }
+    }
+
+    result = JSON.stringify(newData);
   } catch (error: unknown) {
     console.error(error);
     return errorResponse;
