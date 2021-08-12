@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import StreamArray from 'stream-json/streamers/StreamArray';
 
+const enablePOC = false;
 const file = path.join(__dirname, '../seed/counties.timeseries.json');
 
 const pipeline = fs.createReadStream(file).pipe(StreamArray.withParser());
@@ -33,14 +34,29 @@ pipeline.on('data', (data: any) => {
   res.data[fips] = item;
   res.range = Array.from(range).sort();
 
-  // if (count === 10) {
-  //   res.range = Array.from(range);
-  //   fs.writeFile(path.join(__dirname, '../seed/poc.json'), JSON.stringify(res, null, 2), (error) => {
-  //     if (error) throw error;
-  //     console.log('WROTE POC');
-  //     process.exit(0);
-  //   });
-  // }
+  if (count === 10 && enablePOC) {
+    res.range = Array.from(range);
+    const data = {...(res.data)};
+    res.data = [];
+    const dates: any = {};
+    for (const fips of Object.keys(data)) {
+      const cData = data[fips].risks;
+      const ds = Object.keys(cData);
+      for (const date of ds) {
+        if (!dates[date]) {
+          dates[date] = {};
+        }
+
+        dates[date][fips] = cData[date];
+      }
+    }
+    res.data = Object.values(dates);
+    fs.writeFile(path.join(__dirname, '../seed/poc.json'), JSON.stringify(res, null, 2), (error) => {
+      if (error) throw error;
+      console.log('WROTE POC');
+      process.exit(0);
+    });
+  }
   count++;
 
   if (count % 100 === 0) {
@@ -50,12 +66,27 @@ pipeline.on('data', (data: any) => {
 
     process.stdout.clearLine(-1);
     process.stdout.cursorTo(0);
-    process.stdout.write(`Last batch of 100 completed in ${time}ms (total: ${count} in ${end[0]}s)...`);
+    process.stdout.write(`Last batch of 100 completed in ${floatingEnd[0]}s ${time}ms (total: ${count} in ${end[0]}s)...`);
     floatingStart = process.hrtime(); 
   }
 });
 
 pipeline.on('end', () => {
+  const data = {...(res.data)};
+  res.data = [];
+  const dates: any = {};
+  for (const fips of Object.keys(data)) {
+    const cData = data[fips].risks;
+    const ds = Object.keys(cData);
+    for (const date of ds) {
+      if (!dates[date]) {
+        dates[date] = {};
+      }
+
+      dates[date][fips] = cData[date];
+    }
+  }
+  res.data = Object.values(dates);
   fs.writeFileSync(path.join(__dirname, '../seed/counties.parsed.json'), JSON.stringify(res), {encoding: 'utf-8'});
   const end = process.hrtime(start);
   console.log(`\n\n\nDONE. Processed ${count} objects in ${end[0]}s`)
@@ -65,3 +96,4 @@ pipeline.on('end', () => {
 pipeline.on('error', (error: unknown) => {
   throw error;
 });
+ 

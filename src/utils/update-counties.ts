@@ -4,10 +4,7 @@ import client from '../c19-client';
 
 interface CountyData {
   range: string[];
-  data: Record<string, {
-    state: string;
-    risks: Record<string, number>;
-  }>;
+  data: Array<Record<string, number>>;
 }
 
 export const update = async (): Promise<void> => {
@@ -29,6 +26,7 @@ export const update = async (): Promise<void> => {
   console.log('Awaiting counties...');
   const counties = await client.counties();
 
+  let create = false;
   for (const county of counties) {
     const {
       fips,
@@ -37,10 +35,15 @@ export const update = async (): Promise<void> => {
     } = county;
     if (!countyData.range.includes(date)) {
       countyData.range.push(date);
+      create = true;
     }
 
-    if (countyData.data[fips]?.risks) {
-      countyData.data[fips].risks[date] = riskLevels.overall;
+    if (create) {
+      if (countyData.data.length !== countyData.range.length) {
+        countyData.data.push({});
+      }
+
+      countyData.data[countyData.data.length - 1][fips] = riskLevels.overall;
     }
   }
 
