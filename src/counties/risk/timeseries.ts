@@ -1,8 +1,6 @@
 import {cors} from '../../constants/headers';
+import {fetchTimeseries} from '../../utils/fetch-timeseries';
 import runWarm from '../../utils/run-warm';
-import AWS from '../../utils/aws-or-mock';
-
-const S3 = new AWS.S3();
 
 const errorResponse = {
   statusCode: 503,
@@ -15,30 +13,12 @@ interface Data {
 }
 
 export const risk = async (_: AWSLambda.APIGatewayEvent): Promise<AWSLambda.APIGatewayProxyResult> => {
-  let result: string;
+  const result: Data = {range: [], data: []};
+
   try {
-    const object = await S3.getObject({
-      Bucket: 'c19-dashboard-api-production',
-      Key: 'counties/risk-timeseries.json',
-    }).promise();
-    const dataString = object.Body?.toString();
-
-    if (!dataString) {
-      throw new Error('Data is missing!');
-    }
-
-    const jsonData = JSON.parse(dataString) as Data;
-    const newData: Data = {range: [], data: []};
-
-    for (let i = 0; i < jsonData.range.length; i++) {
-      const length = Object.keys(jsonData.data[i]).length;
-      if (length >= 2000) {
-        newData.range.push(jsonData.range[i]);
-        newData.data.push(jsonData.data[i]);
-      }
-    }
-
-    result = JSON.stringify(newData);
+    const timeseries = await fetchTimeseries();
+    result.range = timeseries.range;
+    result.data = timeseries.data.map(item => item.risk);
   } catch (error: unknown) {
     console.error(error);
     return errorResponse;
@@ -47,7 +27,7 @@ export const risk = async (_: AWSLambda.APIGatewayEvent): Promise<AWSLambda.APIG
   return {
     statusCode: 200,
     headers: cors,
-    body: result,
+    body: JSON.stringify(result),
   };
 };
 

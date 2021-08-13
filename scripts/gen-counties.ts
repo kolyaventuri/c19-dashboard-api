@@ -19,19 +19,36 @@ const totalItems = 3222;
 const chunkTime: number[] = [];
 pipeline.on('data', (data: any) => {
   const {value} = data;
-  const {fips, state, riskLevelsTimeseries} = value;
+  const {fips, riskLevelsTimeseries, metricsTimeseries} = value;
   const item: {[key: string]: any} = {
-    state,
-    risks: {}
+    risk: {},
+    r0: {},
+    positivity: {},
+    denisty: {}
   };
-  const timeseries = riskLevelsTimeseries.reverse().slice(0, 30).reverse();
-  for (const risk of timeseries) {
+
+  /* HANDLE RISK DATA */
+  const riskTimeseries = riskLevelsTimeseries.reverse().slice(0, 30).reverse();
+  for (const risk of riskTimeseries) {
     if (!range.has(risk.date)) {
       range.add(risk.date);
     }
 
-    item.risks[risk.date] = risk.overall;
+    item.risk[risk.date] = risk.overall;
   }
+  /* END HANDLE RISK DATA */
+  /* HANDLE METRICS DATA */
+  const metricTimeseries = metricsTimeseries.reverse().slice(0, 30).reverse();
+  for (const metric of metricTimeseries) {
+    if (!range.has(metric.date)) {
+      range.add(metric.date);
+    }
+
+    item.r0[metric.date] = metric.infectionRate ?? -1;
+    item.positivity[metric.date] = metric.testPositivityRatio ?? -1;
+    item.denisty[metric.date] = metric.caseDensity ?? -1;
+  }
+  /* HANDLE METRICS DATA */
 
   res.data[fips] = item;
   res.range = Array.from(range).sort();
@@ -43,15 +60,19 @@ pipeline.on('data', (data: any) => {
     const dates: any = {};
 
     for (const fips of Object.keys(data)) {
-      const cData = data[fips].risks;
+      const cData = data[fips];
+      const keys = Object.keys(cData);
 
-      const ds = Object.keys(cData);
+      const ds = Object.keys(cData.risks);
       for (const date of ds) {
         if (!dates[date]) {
           dates[date] = {};
         }
 
-        dates[date][fips] = cData[date];
+        dates[date][fips] = {};
+        for (const key of keys) {
+          dates[date][fips][key] = cData[key][date];
+        }
       }
     }
 
@@ -96,15 +117,19 @@ pipeline.on('end', () => {
   res.data = [];
   const dates: any = {};
   for (const fips of Object.keys(data)) {
-    const cData = data[fips].risks;
+    const cData = data[fips];
+    const keys = Object.keys(cData);
 
-    const ds = Object.keys(cData);
+    const ds = Object.keys(cData.risk);
     for (const date of ds) {
       if (!dates[date]) {
         dates[date] = {};
       }
 
-      dates[date][fips] = cData[date];
+      dates[date][fips] = {};
+      for (const key of keys) {
+        dates[date][fips][key] = cData[key][date];
+      }
     }
   }
 
