@@ -18,7 +18,7 @@ const getEntryKey = (key: string, extraKey: string): string => {
   }
 
   if (key === 'metrics') {
-    return extraKey; 
+    return extraKey;
   }
 
   return '';
@@ -60,7 +60,7 @@ export const transformTimeseries: TransformFunc = (data, dataKey, length = 13, e
     const item: Timeseries[number] = {};
 
     for (const fips of states) {
-      item[fips] = days[date][fips];
+      item[fips] = days[date][fips] ?? -1;
     }
 
     dataList.push(item);
