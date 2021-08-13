@@ -23,7 +23,7 @@ export const fetchTimeseries = async (type: string | null = null): Promise<Times
 
   for (let i = 0; i < jsonData.range.length; i++) {
     const length = Object.keys(jsonData.data[i]).length;
-    if (length >= 2000) {
+    if (length >= 100) {
       newData.range.push(jsonData.range[i]);
       newData.data.push(jsonData.data[i]);
     }

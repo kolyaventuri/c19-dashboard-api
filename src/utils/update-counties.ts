@@ -1,6 +1,5 @@
-import AWS from 'aws-sdk';
-
 import client from '../c19-client';
+import AWS from './aws-or-mock';
 
 interface CountyData {
   range: string[];
@@ -12,7 +11,7 @@ export const update = async (): Promise<void> => {
   const S3 = new AWS.S3();
   const object = await S3.getObject({
     Bucket: 'c19-dashboard-api-production',
-    Key: 'counties/risk-timeseries.json',
+    Key: 'counties/timeseries.json',
   }).promise();
 
   const dataString = object.Body?.toString();
@@ -56,7 +55,7 @@ export const update = async (): Promise<void> => {
 
   await S3.putObject({
     Bucket: 'c19-dashboard-api-production',
-    Key: 'counties/risk-timeseries.json',
+    Key: 'counties/timeseries.json',
     Body: JSON.stringify(countyData),
   }).promise();
 
