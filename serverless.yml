@@ -87,7 +87,6 @@ functions:
     description: State timeseries
     events:
       - http:
-      - http:
           path: v1/states/{type}/timeseries
           method: get
           cors: true
