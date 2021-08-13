@@ -48,10 +48,10 @@ custom:
       dev: false
       local: false
   customDomain:
-    domainName: c19.api.kolyaventuri.dev
+    domainName: c19.api.blagl.xyz
     stage: production
     basePath: ''
-    certificateName: 'kolyaventuri.dev'
+    certificateName: 'blagl.xyz'
     createRoute53Record: true
     endpointType: 'regional'
     securityPolicy: tls_1_2
