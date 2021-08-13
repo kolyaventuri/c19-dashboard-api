@@ -140,7 +140,7 @@ pipeline.on('end', () => {
   });
 
   res.data = entries.map(([,value]) => value); 
-  fs.writeFileSync(path.join(__dirname, '../seed/risk-timeseries.json'), JSON.stringify(res), {encoding: 'utf-8'});
+  fs.writeFileSync(path.join(__dirname, '../seed/timeseries.json'), JSON.stringify(res), {encoding: 'utf-8'});
   const end = process.hrtime(start);
   console.log(`\n\n\nDONE. Processed ${count} objects in ${end[0]}s`)
   process.exit(0);
