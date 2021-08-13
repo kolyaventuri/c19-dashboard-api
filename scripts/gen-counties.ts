@@ -15,6 +15,8 @@ let count = 0;
 let start = process.hrtime();
 let floatingStart = process.hrtime();
 const range = new Set<string>([]);
+const totalItems = 3222;
+const chunkTime: number[] = [];
 pipeline.on('data', (data: any) => {
   const {value} = data;
   const {fips, state, riskLevelsTimeseries} = value;
@@ -62,11 +64,20 @@ pipeline.on('data', (data: any) => {
   if (count % 100 === 0) {
     const end = process.hrtime(start);
     const floatingEnd = process.hrtime(floatingStart);
-    const time = (floatingEnd[1] / 1000000).toFixed(2);
+    const ms = floatingEnd[1] / 1000000;
+    const secs = floatingEnd[0];
+
+    const timeInMs = (secs * 1000) + ms;
+    chunkTime.push(timeInMs);
+    const avg = chunkTime.reduce((s, v) => s + v, 0) / chunkTime.length;
+    const avgS = ~~(avg / 1000);
+    const avgMs = avg - (avgS * 1000);
+
+    const est = ((totalItems - count) / 100) * avgS;
 
     process.stdout.clearLine(-1);
     process.stdout.cursorTo(0);
-    process.stdout.write(`Last batch of 100 completed in ${floatingEnd[0]}s ${time}ms (total: ${count} in ${end[0]}s)...`);
+    process.stdout.write(`Last batch of 100 completed in ${secs}s ${ms.toFixed(2)}ms (total: ${count} in ${end[0]}s) (avg: ${avgS}s ${avgMs.toFixed(2)}ms, est remaining: ${est}s)...`);
     floatingStart = process.hrtime(); 
   }
 });
@@ -87,7 +98,7 @@ pipeline.on('end', () => {
     }
   }
   res.data = Object.values(dates);
-  fs.writeFileSync(path.join(__dirname, '../seed/counties.parsed.json'), JSON.stringify(res), {encoding: 'utf-8'});
+  fs.writeFileSync(path.join(__dirname, '../seed/risk-timeseries.json'), JSON.stringify(res), {encoding: 'utf-8'});
   const end = process.hrtime(start);
   console.log(`\n\n\nDONE. Processed ${count} objects in ${end[0]}s`)
   process.exit(0);
