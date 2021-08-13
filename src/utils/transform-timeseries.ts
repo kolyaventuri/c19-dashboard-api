@@ -2,7 +2,7 @@ type Timeseries = Array<{[id: string]: number}>;
 
 type Data = Record<string, unknown>;
 
-type TransformFunc = <T extends unknown[]>(data: T, dataKey: string, length?: number) => {
+type TransformFunc = <T extends unknown[]>(data: T, dataKey: string, length?: number, extraKey?: string) => {
   range: string[];
   data: Timeseries;
 };
@@ -12,17 +12,21 @@ interface Item {
   date: string;
 }
 
-const getEntryKey = (key: string): string => {
+const getEntryKey = (key: string, extraKey: string): string => {
   if (key === 'riskLevels') {
     return 'overall';
+  }
+
+  if (key === 'metrics') {
+    return extraKey; 
   }
 
   return '';
 };
 
-export const transformTimeseries: TransformFunc = (data, dataKey, length = 13) => {
+export const transformTimeseries: TransformFunc = (data, dataKey, length = 13, extraKey = '') => {
   const days: Record<string, Record<string, number>> = {};
-  const entryKey = getEntryKey(dataKey);
+  const entryKey = getEntryKey(dataKey, extraKey);
 
   for (const entry of (data as Data[])) {
     const abbr = entry.fips as string || 'UNKNOWN';

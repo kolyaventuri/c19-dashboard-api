@@ -16,9 +16,9 @@ export const risk = async (_: AWSLambda.APIGatewayEvent): Promise<AWSLambda.APIG
   const result: Data = {range: [], data: []};
 
   try {
-    const timeseries = await fetchTimeseries();
+    const timeseries = await fetchTimeseries('risk');
     result.range = timeseries.range;
-    result.data = timeseries.data.map(item => item.risk);
+    result.data = timeseries.data;
   } catch (error: unknown) {
     console.error(error);
     return errorResponse;
