@@ -82,22 +82,32 @@ functions:
           path: v1/healthcheck
           method: get
           cors: true
-  stateTimeseriesRisk:
-    handler: src/states/risk/timeseries.handler
-    description: State risk timeseries
+  stateTimeseries:
+    handler: src/states/timeseries.handler
+    description: State timeseries
     events:
       - http:
-          path: v1/states/risk/timeseries
+      - http:
+          path: v1/states/{type}/timeseries
           method: get
           cors: true
-  countyTimeseriesRisk:
-    handler: src/counties/risk/timeseries.handler
-    description: County risk timeseries
+          request:
+            parameters:
+                paths:
+                  type: true
+  countyTimeseries:
+    handler: src/counties/timeseries.handler
+    description: County timeseries
     events:
       - http:
-          path: v1/counties/risk/timeseries
+          path: v1/counties/{type}/timeseries
           method: get
           cors: true
+          request:
+            parameters:
+                paths:
+                  type: true
+
   countiesUpdater:
     handler: src/utils/update-counties.update
     description: Update the Counties data in S3

@@ -4,7 +4,7 @@ import client from '../c19-client';
 
 interface CountyData {
   range: string[];
-  data: Array<Record<string, number>>;
+  data: Array<Record<string, Record<string, number>>>;
 }
 
 export const update = async (): Promise<void> => {
@@ -31,6 +31,7 @@ export const update = async (): Promise<void> => {
     const {
       fips,
       riskLevels,
+      metrics,
       lastUpdatedDate: date,
     } = county;
     if (!countyData.range.includes(date)) {
@@ -43,7 +44,11 @@ export const update = async (): Promise<void> => {
         countyData.data.push({});
       }
 
-      countyData.data[countyData.data.length - 1][fips] = riskLevels.overall;
+      const index = countyData.data.length - 1;
+      countyData.data[index][fips].risk = riskLevels.overall;
+      countyData.data[index][fips].r0 = metrics.infectionRate ?? -1;
+      countyData.data[index][fips].positivity = metrics.testPositivityRatio ?? -1;
+      countyData.data[index][fips].density = metrics.caseDensity ?? -1;
     }
   }
 
