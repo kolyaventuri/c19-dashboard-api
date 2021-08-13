@@ -14,7 +14,7 @@ class S3 {
   getObject({Key}: Props): GetObject {
     let file: string;
     if (Key === 'counties/risk-timeseries.json') {
-      file = '../../../../../seed/counties.parsed.json';
+      file = '../../../../../seed/risk-timeseries.json';
     }
 
     return {

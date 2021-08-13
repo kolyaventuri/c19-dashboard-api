@@ -37,12 +37,14 @@ pipeline.on('data', (data: any) => {
   res.range = Array.from(range).sort();
 
   if (count === 10 && enablePOC) {
-    res.range = Array.from(range);
     const data = {...(res.data)};
+
     res.data = [];
     const dates: any = {};
+
     for (const fips of Object.keys(data)) {
       const cData = data[fips].risks;
+
       const ds = Object.keys(cData);
       for (const date of ds) {
         if (!dates[date]) {
@@ -52,7 +54,14 @@ pipeline.on('data', (data: any) => {
         dates[date][fips] = cData[date];
       }
     }
-    res.data = Object.values(dates);
+
+    const entries = Object.entries(dates).sort(([a], [b]) => {
+      if (a > b) return 1;
+      if (a < b) return -1;
+      return 0;
+    });
+
+    res.data = entries.map(([,value]) => value); 
     fs.writeFile(path.join(__dirname, '../seed/poc.json'), JSON.stringify(res, null, 2), (error) => {
       if (error) throw error;
       console.log('WROTE POC');
@@ -88,6 +97,7 @@ pipeline.on('end', () => {
   const dates: any = {};
   for (const fips of Object.keys(data)) {
     const cData = data[fips].risks;
+
     const ds = Object.keys(cData);
     for (const date of ds) {
       if (!dates[date]) {
@@ -97,7 +107,14 @@ pipeline.on('end', () => {
       dates[date][fips] = cData[date];
     }
   }
-  res.data = Object.values(dates);
+
+  const entries = Object.entries(dates).sort(([a], [b]) => {
+    if (a > b) return 1;
+    if (a < b) return -1;
+    return 0;
+  });
+
+  res.data = entries.map(([,value]) => value); 
   fs.writeFileSync(path.join(__dirname, '../seed/risk-timeseries.json'), JSON.stringify(res), {encoding: 'utf-8'});
   const end = process.hrtime(start);
   console.log(`\n\n\nDONE. Processed ${count} objects in ${end[0]}s`)
