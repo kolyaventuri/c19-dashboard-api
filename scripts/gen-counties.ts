@@ -24,7 +24,7 @@ pipeline.on('data', (data: any) => {
     risk: {},
     r0: {},
     positivity: {},
-    denisty: {}
+    density: {}
   };
 
   /* HANDLE RISK DATA */
@@ -46,7 +46,7 @@ pipeline.on('data', (data: any) => {
 
     item.r0[metric.date] = metric.infectionRate ?? -1;
     item.positivity[metric.date] = metric.testPositivityRatio ?? -1;
-    item.denisty[metric.date] = metric.caseDensity ?? -1;
+    item.density[metric.date] = metric.caseDensity ?? -1;
   }
   /* HANDLE METRICS DATA */
 
