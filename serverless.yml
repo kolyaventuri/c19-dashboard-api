@@ -103,7 +103,7 @@ functions:
     description: Update the Counties data in S3
     events:
       - eventBridge:
-          schedule: cron(0 19 * * ? *)
+          schedule: cron(0 14-18 * * ? *)
 
 resources:
   Resources:
