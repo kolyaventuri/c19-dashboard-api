@@ -2,7 +2,7 @@ import {it} from 'mocha';
 import {expect} from 'chai';
 import proxyquire from 'proxyquire';
 import sinon, {stub} from 'sinon';
-import {risk as realRisk} from '../../../src/states/risk/timeseries';
+import {risk as realRisk} from '../../../src/counties/timeseries';
 
 import countyData from '../../fixtures/timeseries/counties-expected.json';
 
@@ -11,7 +11,7 @@ let mockS3GetObject: sinon.SinonStub;
 let env: string;
 
 before(() => {
-  env = process.env.NODE_ENV;
+  env = process.env.NODE_ENV!;
 });
 
 after(() => {
