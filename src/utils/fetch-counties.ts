@@ -3,8 +3,10 @@
 import fs from 'fs';
 import request from 'request';
 import progress from 'request-progress';
-import dotenv from 'dotenv';
-dotenv.config();
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 interface State {
   percent: number;
