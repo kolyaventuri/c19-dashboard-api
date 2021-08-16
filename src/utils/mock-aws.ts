@@ -49,7 +49,11 @@ class S3 {
     let file: string;
 
     if (Key === 'counties/timeseries.json') {
-      file = '../../../../seed/timeseries.json';
+      file = '../../seed/timeseries.json';
+
+      if (process.env.USE_SHORT_PATH !== 'true') {
+        file = '../../' + file;
+      }
     }
 
     return {
