@@ -55,7 +55,7 @@ class S3 {
     return {
       promise: async (): Promise<void> => new Promise((resolve, reject) => {
         // eslint-disable-next-line unicorn/prefer-module
-        const fPath = path.join(__dirname, file); 
+        const fPath = path.join(__dirname, file);
         fs.writeFile(fPath, Body, {encoding: 'utf-8'}, error => {
           if (error) {
             reject(error);
@@ -64,7 +64,7 @@ class S3 {
 
           resolve();
         });
-      })
+      }),
     };
   }
 }

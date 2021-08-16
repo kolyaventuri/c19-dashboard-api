@@ -43,4 +43,4 @@ export const fetchTimeseries = async (type: string | null = null): Promise<Times
   }
 
   return newData;
-}
+};
