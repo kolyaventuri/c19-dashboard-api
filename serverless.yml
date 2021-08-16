@@ -120,6 +120,11 @@ functions:
     fileSystemConfig:
       localMountPath: ${env:EFS_PATH}
       arn: arn:aws:elasticfilesystem:${self:provider.region}:${env:AWS_ID}:access-point/${env:EFS_AP}
+    vpc:
+      securityGroupIds:
+        - ${env:VPC_SEC_GROUP} 
+      subnetIds:
+        - ${env:VPC_SUBNET_ID}
 
 resources:
   Resources:
