@@ -9,7 +9,7 @@ const errorResponse = {
 };
 
 const allowedTypes = new Set(['risk', 'r0', 'density', 'positivity']);
-const keyMap: {[key: string]: string} = {
+const keyMap: Record<string, string> = {
   r0: 'infectionRate',
   density: 'caseDensity',
   positivity: 'testPositivityRatio',

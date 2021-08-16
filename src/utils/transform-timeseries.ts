@@ -1,4 +1,4 @@
-type Timeseries = Array<{[id: string]: number}>;
+type Timeseries = Array<Record<string, number>>;
 
 type Data = Record<string, unknown>;
 
@@ -42,7 +42,7 @@ export const transformTimeseries: TransformFunc = (data, dataKey, length = 13, e
   }
 
   const keys = Object.keys(days).sort();
-  // const items = {};
+  // Const items = {};
   // const dataList: Timeseries = keys.map(date => {
   //   const states = Object.keys(days[date]);
 

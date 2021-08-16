@@ -19,6 +19,7 @@ provider:
     DYNAMO_URL: ${self:custom.dynamo.url.${self:provider.stage}, ""}
     DYNAMO_TABLE: ${self:custom.dynamo.table.cache}
     COVID_ACT_NOW_KEY: ${env:COVID_ACT_NOW_KEY}
+    EFS_PATH: ${env:EFS_PATH}
 
 custom:
   config:
@@ -113,6 +114,12 @@ functions:
     events:
       - eventBridge:
           schedule: cron(0 14-18 * * ? *)
+  fullUpdater:
+    handler: src/utils/fetch-and-update.update
+    description: Fetch fresh data and update in S3
+    fileSystemConfig:
+      localMountPath: ${env:EFS_PATH}
+      arn: arn:aws:elasticfilesystem:${self:provider.region}:${env:AWS_ID}:access-point/${env:EFS_AP}
 
 resources:
   Resources:

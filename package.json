@@ -156,6 +156,6 @@
     "xo": "^0.41.0"
   },
   "dependencies": {
-    "@kolyaventuri/covid-act-now": "^1.0.3"
+    "@kolyaventuri/covid-act-now": "^1.1.0"
   }
 }
