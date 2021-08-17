@@ -27,3 +27,6 @@ npm-debug.log*
 _warmup
 
 seed/*.json
+
+ec2/**/*
+!ec2/run-latest.js
