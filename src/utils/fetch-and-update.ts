@@ -28,9 +28,6 @@ export const update = async (): Promise<void> => {
       Body: data,
     }).promise();
   } catch (error: unknown) {
-    console.error(new Error('Fail').stack);
-    console.trace();
-    console.error((error as Error).stack);
     throw error;
   } finally {
     await unlink(dataPath); // Cleanup full dataset
