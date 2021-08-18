@@ -117,6 +117,7 @@ functions:
   fullUpdater:
     handler: src/utils/fetch-and-update.update
     description: Fetch fresh data and update in S3
+    timeout: 360
     fileSystemConfig:
       localMountPath: ${env:EFS_PATH}
       arn: arn:aws:elasticfilesystem:${self:provider.region}:${env:AWS_ID}:access-point/${env:EFS_AP}

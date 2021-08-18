@@ -12,14 +12,14 @@ const readFile = promisify(fs.readFile);
 export const update = async (): Promise<void> => {
   process.env.USE_SHORT_PATH = 'true';
   const efsPath: string = process.env.NODE_ENV === 'production' ? process.env.EFS_PATH! : path.join(__dirname, '../../seed');
-  const timestamp = new Date().getTime()
+  const timestamp = Date.now();
   const dataPath = path.join(efsPath, `/counties.timeseries-${timestamp}.json`);
   const outPath = path.join(efsPath, `/timeseries-${timestamp}.json`);
 
   try {
     await fetchCounties(dataPath, true);
     await genCounties(dataPath, outPath, true);
-    
+
     const data = await readFile(outPath);
     const S3 = new AWS.S3();
     await S3.putObject({
