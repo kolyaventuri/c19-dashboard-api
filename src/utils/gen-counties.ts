@@ -30,6 +30,85 @@ interface ParseResult {
   data: Record<string, ParseItem>;
 }
 const totalItems = 3222;
+const MAX_DAYS = 30;
+
+const transformResult = (result: ParseResult) => {
+  const data = {...(result.data)};
+  const newResult: Result = {
+    range: [],
+    data: [],
+  };
+
+  const dates: Record<string, Day> = {};
+
+  for (const fips of Object.keys(data)) {
+    const cData = data[fips];
+    const keys = Object.keys(cData) as Array<keyof County>;
+
+    const ds = Object.keys(cData.risk);
+    for (const date of ds) {
+      if (!dates[date]) {
+        dates[date] = {};
+      }
+
+      // {[date]: {[fips]: data}}
+      const county: Partial<County> = {};
+      for (const key of keys) {
+        county[key] = cData[key][date];
+      }
+
+      dates[date][fips] = county as County;
+    }
+  }
+
+  const entries: Array<[string, Day]> = Object.entries(dates).sort(([a], [b]) => {
+    if (a > b) {
+      return 1;
+    }
+
+    if (a < b) {
+      return -1;
+    }
+
+    return 0;
+  });
+
+  /* eslint-disable max-depth */
+  for (const [_i, [date, data]] of Object.entries(entries)) {
+    const i = Number.parseInt(_i, 10);
+
+    newResult.range.push(date);
+
+    if (i > 0) {
+      // Iterate over every fips key on the previous day
+      const previousData = newResult.data[i - 1];
+      for (const fipsKey of Object.keys(previousData)) {
+        if (data[fipsKey]) {
+          // Exists, check each key
+          const county = data[fipsKey];
+          for (const [type, value] of Object.entries(county)) {
+            if (value < 0) {
+              // @ts-expect-error - Funky
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+              data[fipsKey][type] = previousData[fipsKey][type];
+            }
+          }
+        } else {
+          // Clone if not exists
+          data[fipsKey] = previousData[fipsKey];
+        }
+      }
+    }
+
+    newResult.data.push(data);
+  }
+  /* eslint-enable max-depth */
+
+  newResult.range = newResult.range.slice(-MAX_DAYS);
+  newResult.data = newResult.data.slice(-MAX_DAYS);
+
+  return newResult;
+};
 
 const genCounties = async (path: string, outPath: string, useConsoleLog = false, enablePOC = false): Promise<void> => new Promise((resolve, reject) => {
   console.log(useConsoleLog);
@@ -56,8 +135,7 @@ const genCounties = async (path: string, outPath: string, useConsoleLog = false,
     };
 
     /* HANDLE RISK DATA */
-    const riskTimeseries = riskLevelsTimeseries.reverse().slice(0, 30).reverse();
-    for (const risk of riskTimeseries) {
+    for (const risk of riskLevelsTimeseries) {
       if (!range.has(risk.date)) {
         range.add(risk.date);
       }
@@ -67,8 +145,7 @@ const genCounties = async (path: string, outPath: string, useConsoleLog = false,
     /* END HANDLE RISK DATA */
 
     /* HANDLE METRICS DATA */
-    const metricTimeseries = metricsTimeseries.reverse().slice(0, 30).reverse();
-    for (const metric of metricTimeseries) {
+    for (const metric of metricsTimeseries) {
       if (!range.has(metric.date)) {
         range.add(metric.date);
       }
@@ -83,50 +160,7 @@ const genCounties = async (path: string, outPath: string, useConsoleLog = false,
     result.range = Array.from(range).sort();
 
     if (count === 10 && enablePOC) {
-      const data = {...(result.data)};
-      const newResult: Result = {
-        range: [],
-        data: [],
-      };
-
-      const dates: Record<string, Day> = {};
-
-      for (const fips of Object.keys(data)) {
-        const cData = data[fips];
-        const keys = Object.keys(cData) as Array<keyof County>;
-
-        const ds = Object.keys(cData.risk);
-        for (const date of ds) {
-          if (!dates[date]) {
-            dates[date] = {};
-          }
-
-          // {[date]: {[fips]: data}}
-          const county: Partial<County> = {};
-          for (const key of keys) {
-            county[key] = cData[key][date];
-          }
-
-          dates[date][fips] = county as County;
-        }
-      }
-
-      const entries: Array<[string, Day]> = Object.entries(dates).sort(([a], [b]) => {
-        if (a > b) {
-          return 1;
-        }
-
-        if (a < b) {
-          return -1;
-        }
-
-        return 0;
-      });
-
-      for (const [date, data] of entries) {
-        newResult.range.push(date);
-        newResult.data.push(data);
-      }
+      const newResult = transformResult(result);
 
       fs.writeFile(outPath, JSON.stringify(newResult, null, 2), (error: unknown) => {
         if (error) {
@@ -155,7 +189,7 @@ const genCounties = async (path: string, outPath: string, useConsoleLog = false,
       const avgS = Math.trunc(avg / 1000);
       const avgMs = avg - (avgS * 1000);
 
-      const est = ((totalItems - count) / 100) * avgS;
+      const est = (((totalItems - count) / 100) * avgS).toPrecision(4);
 
       const value = `Last batch of 100 completed in ${secs}s ${ms.toFixed(2)}ms (total: ${count} in ${end[0]}s) (avg: ${avgS}s ${avgMs.toFixed(2)}ms, est remaining: ${est}s)...`;
       if (useConsoleLog) {
@@ -171,50 +205,7 @@ const genCounties = async (path: string, outPath: string, useConsoleLog = false,
   });
 
   pipeline.on('end', () => {
-    const data = {...(result.data)};
-    const newResult: Result = {
-      range: [],
-      data: [],
-    };
-
-    const dates: Record<string, Day> = {};
-
-    for (const fips of Object.keys(data)) {
-      const cData = data[fips];
-      const keys = Object.keys(cData) as Array<keyof County>;
-
-      const ds = Object.keys(cData.risk);
-      for (const date of ds) {
-        if (!dates[date]) {
-          dates[date] = {};
-        }
-
-        // {[date]: {[fips]: data}}
-        const county: Partial<County> = {};
-        for (const key of keys) {
-          county[key] = cData[key][date];
-        }
-
-        dates[date][fips] = county as County;
-      }
-    }
-
-    const entries: Array<[string, Day]> = Object.entries(dates).sort(([a], [b]) => {
-      if (a > b) {
-        return 1;
-      }
-
-      if (a < b) {
-        return -1;
-      }
-
-      return 0;
-    });
-
-    for (const [date, data] of entries) {
-      newResult.range.push(date);
-      newResult.data.push(data);
-    }
+    const newResult = transformResult(result);
 
     fs.writeFile(outPath, JSON.stringify(newResult), (error: unknown) => {
       if (error) {
