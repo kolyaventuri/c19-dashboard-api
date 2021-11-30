@@ -6,7 +6,7 @@ const outFile = path.join(__dirname, '../seed/timeseries.json');
 
 (async () => {
   try {
-    await genCounties(file, outFile);
+    await genCounties(file, outFile, false, false);
   } catch (error: unknown) {
     throw error;
   }

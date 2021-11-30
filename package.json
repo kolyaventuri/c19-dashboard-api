@@ -17,7 +17,10 @@
     "build": "sls webpack",
     "dynamo:start": "sls dynamodb start --stage local",
     "dynamo:install": "sls dynamodb install",
-    "dynamo:reset": "ts-node ./scripts/reset-db.ts && sls dynamodb migrate --stage local"
+    "dynamo:reset": "ts-node -T ./scripts/reset-db.ts && sls dynamodb migrate --stage local",
+    "gen:counties": "ts-node -T ./scripts/gen-counties.ts",
+    "gen:full": "ts-node -T ./scripts/run-full-updater.ts",
+    "gen:fetch": "ts-node -T ./scripts/fetch-counties.ts"
   },
   "repository": {
     "type": "git",
