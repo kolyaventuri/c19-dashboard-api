@@ -30,6 +30,7 @@ interface ParseResult {
   data: Record<string, ParseItem>;
 }
 const totalItems = 3222;
+const MAX_DAYS = 30;
 
 const transformResult = (result: ParseResult) => {
   const data = {...(result.data)};
@@ -103,6 +104,9 @@ const transformResult = (result: ParseResult) => {
   }
   /* eslint-enable max-depth */
 
+  newResult.range = newResult.range.slice(-MAX_DAYS);
+  newResult.data = newResult.data.slice(-MAX_DAYS);
+
   return newResult;
 };
 
@@ -131,8 +135,7 @@ const genCounties = async (path: string, outPath: string, useConsoleLog = false,
     };
 
     /* HANDLE RISK DATA */
-    const riskTimeseries = riskLevelsTimeseries.reverse().slice(0, 30).reverse();
-    for (const risk of riskTimeseries) {
+    for (const risk of riskLevelsTimeseries) {
       if (!range.has(risk.date)) {
         range.add(risk.date);
       }
@@ -142,8 +145,7 @@ const genCounties = async (path: string, outPath: string, useConsoleLog = false,
     /* END HANDLE RISK DATA */
 
     /* HANDLE METRICS DATA */
-    const metricTimeseries = metricsTimeseries.reverse().slice(0, 30).reverse();
-    for (const metric of metricTimeseries) {
+    for (const metric of metricsTimeseries) {
       if (!range.has(metric.date)) {
         range.add(metric.date);
       }
