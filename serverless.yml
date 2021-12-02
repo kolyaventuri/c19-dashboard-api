@@ -117,14 +117,14 @@ functions:
     timeout: 25
     events:
       - eventBridge:
-          schedule: cron(50 15-16,19,21 * * ? *)
+          schedule: cron(55 15-16,19,21 * * ? *)
   instanceTearDown:
     handler: src/utils/ec2/instance.stop
-    description: Tears down the EC2 instance
+    description: Tears down the EC2 instance if the auto shutdown didn't work
     timeout: 25
     events:
       - eventBridge:
-          schedule: cron(20 16-17,20,22 * * ? *)
+          schedule: cron(30 16-17,20,22 * * ? *)
   fullUpdater:
     handler: src/utils/fetch-and-update.update
     description: Fetch fresh data and update in S3
