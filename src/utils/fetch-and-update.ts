@@ -5,11 +5,16 @@ import {promisify} from 'util';
 import AWS from './aws-or-mock';
 import fetchCounties from './fetch-counties';
 import genCounties from './gen-counties';
+import * as instance from './ec2/instance';
 
 const unlink = promisify(fs.unlink);
 const readFile = promisify(fs.readFile);
 
-export const update = async (): Promise<void> => {
+interface UpdateArgs {
+  shutdown?: boolean;
+}
+
+export const update = async ({shutdown = false}: UpdateArgs = {}): Promise<void> => {
   process.env.USE_SHORT_PATH = 'true';
   const efsPath: string = process.env.NODE_ENV === 'production' ? process.env.EFS_PATH! : path.join(__dirname, '../../seed');
   const timestamp = Date.now();
@@ -32,5 +37,10 @@ export const update = async (): Promise<void> => {
   } finally {
     await unlink(dataPath); // Cleanup full dataset
     await unlink(outPath); // Cleanup parsed data
+
+    if (shutdown) {
+      console.log('Shutdown enabled, stopping instance.');
+      await instance.stop();
+    }
   }
 };
