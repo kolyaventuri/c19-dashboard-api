@@ -118,7 +118,7 @@ const fetchOrStore = async (key, fn) => {
     console.log('Running latest updater...');
 
     const {update} = require(path.join(exDir, 'src/utils/fetch-and-update'));
-    await update();
+    await update({ shutdown: true });
   };
 
   if (Key !== old) {
