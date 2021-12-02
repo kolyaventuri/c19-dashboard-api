@@ -143,7 +143,7 @@ const fetchOrStore = async (key, fn) => {
       //console.log(data);
     });
 
-    proc.on('exit', postZip)
+    proc.on('exit', postZip);
   } else {
     await postZip(0);
   }
