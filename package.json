@@ -20,7 +20,10 @@
     "dynamo:reset": "ts-node -T ./scripts/reset-db.ts && sls dynamodb migrate --stage local",
     "gen:counties": "ts-node -T ./scripts/gen-counties.ts",
     "gen:full": "ts-node -T ./scripts/run-full-updater.ts",
-    "gen:fetch": "ts-node -T ./scripts/fetch-counties.ts"
+    "gen:fetch": "npm run fetch:counties",
+    "fetch": "ts-node -T ./scripts/fetch.ts",
+    "fetch:counties": "npm run fetch -- --type=county",
+    "fetch:states": "npm run fetch -- --type=state"
   },
   "repository": {
     "type": "git",
@@ -118,6 +121,7 @@
     "@types/sinon": "^10.0.2",
     "@types/sinon-chai": "^3.2.5",
     "@types/stream-json": "^1.7.1",
+    "@types/yargs": "^17.0.8",
     "@typescript-eslint/eslint-plugin": "^4.28.2",
     "@typescript-eslint/parser": "^4.28.2",
     "aws-sdk": "^2.942.0",
@@ -153,7 +157,8 @@
     "typescript": "^4.3.5",
     "webpack": "^5.44.0",
     "webpack-node-externals": "^3.0.0",
-    "xo": "^0.41.0"
+    "xo": "^0.41.0",
+    "yargs": "^17.3.1"
   },
   "dependencies": {
     "@kolyaventuri/covid-act-now": "^1.1.0",
