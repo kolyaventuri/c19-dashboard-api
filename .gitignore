@@ -26,7 +26,8 @@ npm-debug.log*
 # Webpack + serverless
 _warmup
 
-seed/*.json
+seed/*
+!seed/.keep
 
 ec2/**/*
 !ec2/run-latest.js
